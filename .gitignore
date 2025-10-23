@@ -7,3 +7,4 @@ temp/
 
 data/
 !data/CustomPhotonField/
+!data/particle_masses.txt
