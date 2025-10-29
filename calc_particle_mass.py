@@ -44,7 +44,6 @@ def forced_mass_mev(pdgid):
     p = Particle.from_pdgid(pdgid)
     m = p.mass  # MeV
     if m is None or (isinstance(m, float) and math.isnan(m)):
-        # If PDG truly lacks a central value, skip upstream (we keep file numeric).
         raise ValueError("no mass")
     return float(m)
 
@@ -60,7 +59,6 @@ for p in Particle.findall():
 
     aid = abs(p.pdgid)
     if aid not in absid_to_pdgid:
-        # Prefer the positive PDGID if it exists; else keep what we saw first
         try:
             Particle.from_pdgid(aid)  # check positive exists
             absid_to_pdgid[aid] = aid
@@ -88,7 +86,6 @@ if not os.path.exists(folder):
 # Write to file
 fout = open(os.path.join(folder, "particle_masses.txt"), "w")
 
-# Add header like your original script
 fout.write("# PDG masses [kg]; particle/antiparticle share the same value via |PDG|\n")
 try:
     git_hash = gh.get_git_revision_hash()
