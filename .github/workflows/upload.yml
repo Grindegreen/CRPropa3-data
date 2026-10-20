@@ -63,7 +63,23 @@ jobs:
         if_no_artifact_found: fail
         
     - name: Display structure of downloaded files
-      run: ls -R
+      run: |
+        ls -R
+        
+    - name: Setup rclone for upload 
+      run : | 
+        sudo apt-get install rclone
+        rclone config create sciebo webdav\
+          url="https://ruhr-uni-bochum.sciebo.de/remote.php/webdav/"\
+          vendor="owncloud"\
+          user="${{ secrets.SCIEBO_CRPDATA_USR }}"\
+          pass="${{ secrets.SCIEBO_CRPDATA_PWD }}"
+        
+    - name: Upload to sciebo using rclone 
+      run: rclone copy -P . sciebo:crp_storage/InstallationDownload/ --include "${{ github.event.inputs.name }}.tar.gz*"
+
+    
+        
     
     # 2024-03-11: Currently not working. Could be used as a starting point for some future updates.
     #- name: Upload to sciebo
