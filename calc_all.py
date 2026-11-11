@@ -120,10 +120,10 @@ def BH_pair_production(fields: list):
     print("#"*50)
     print("Calculate Bethe-Heitler pair production.\n")
     t1 = time.time()
-    bh.reformat_secondary_rates()
     for field in fields:
         print(field.name)
         bh.process(field)
+        bh.process_spectrum(field)
     t2 = time.time()
     print("\nBH pair production tables generated in {} seconds.".format(round(t2-t1, 2)))
     print("#"*50+"\n")
