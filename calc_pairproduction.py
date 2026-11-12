@@ -243,6 +243,7 @@ def process_spectrum(field):
       columns j = 0..169 : log10(Ee/eV) = 7 + 0.1 j      (pdf(Ee) ~ dN/dEe * Ee, Ee drawn in [6.95, 7.05] + 0.1 j)
     Only the shape of each row is used (the energy budget comes from the loss rate), so the normalization is free;
     the table is dN/dEe/dx per nucleus in [1/eV/cm] as in the CRPropa2 tables it replaces.
+    Entries with Ee >= Ep (= gamma m_p c^2) are set to zero.
     The file has no header because ElectronPairProduction::initSpectrum reads plain numbers.
 
     field : photon field as defined in photonField.py
@@ -250,6 +251,9 @@ def process_spectrum(field):
     gamma = 10**(6.05 + 0.1 * np.arange(70))
     Ee = 10**(7 + 0.1 * np.arange(170)) * eV
     spec = electronSpectrum(gamma, Ee, field) * eV * cm   # [1/J/m] -> [1/eV/cm]
+    # Energy conservation requires Ee < Ep. The static-nucleus formula (no recoil) still reaches Ee ~ 2 omega gamma
+    # m_e c^2 > Ep at large omega, so these columns are set to zero (as in the CRPropa2 tables).
+    spec[Ee[None, :] >= gamma[:, None] * mass_proton * c_squared] = 0
 
     folder = 'data/ElectronPairProduction'
     if not os.path.exists(folder):
